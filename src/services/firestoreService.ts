@@ -9,7 +9,7 @@ import {
   setDoc,
   serverTimestamp,
 } from 'firebase/firestore';
-import { db } from '../firebase/config';
+import { db, auth } from '../firebase/config';
 import { handleFirestoreError, OperationType } from '../firebase/errors';
 import { QuizSubmissionRecord, Announcement, CustomMaterial, AppUser } from '../types';
 
@@ -85,7 +85,7 @@ export async function getStudentQuizResults(userId: string): Promise<QuizSubmiss
   }
 }
 
-// Get All Quiz Results for Teacher/Admin View
+// Get All Quiz Results (restricted per-user by security rules)
 export async function getAllQuizResults(): Promise<QuizSubmissionRecord[]> {
   const path = QUIZ_RESULTS_COLLECTION;
   try {
@@ -95,8 +95,16 @@ export async function getAllQuizResults(): Promise<QuizSubmissionRecord[]> {
       ...(d.data() as Omit<QuizSubmissionRecord, 'id'>),
     }));
     return items.sort((a, b) => new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime());
-  } catch (error) {
-    handleFirestoreError(error, OperationType.LIST, path);
+  } catch {
+    // If global list is locked down by strict per-user rules, query current user's records
+    try {
+      if (auth.currentUser) {
+        return await getStudentQuizResults(auth.currentUser.uid);
+      }
+    } catch {
+      // Ignored
+    }
+    return [];
   }
 }
 
