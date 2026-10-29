@@ -1,0 +1,97 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "User profile document containing authentication info and role (student or admin/teacher)",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "description": "User unique identifier" },
+        "displayName": { "type": "string", "maxLength": 100, "description": "Full name or username" },
+        "email": { "type": "string", "maxLength": 120, "description": "User email address" },
+        "role": { "type": "string", "enum": ["student", "admin"], "description": "User authorization role" },
+        "avatar": { "type": "string", "maxLength": 255, "description": "Avatar url or icon identifier" },
+        "createdAt": { "type": "string", "description": "ISO timestamp of user registration" }
+      },
+      "required": ["uid", "displayName", "role"]
+    },
+    "QuizResult": {
+      "title": "QuizResult",
+      "description": "Quiz submission record containing score and performance",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Document ID" },
+        "userId": { "type": "string", "description": "User UID who took the quiz" },
+        "userName": { "type": "string", "maxLength": 100, "description": "Display name of the student" },
+        "chapterId": { "type": "string", "maxLength": 50, "description": "Chapter identifier (e.g., bab-1)" },
+        "chapterTitle": { "type": "string", "maxLength": 120, "description": "Title of the chapter" },
+        "score": { "type": "number", "description": "Points earned" },
+        "maxScore": { "type": "number", "description": "Maximum possible score" },
+        "percentage": { "type": "number", "description": "Percentage score (0-100)" },
+        "correctAnswers": { "type": "number", "description": "Number of correct answers" },
+        "totalQuestions": { "type": "number", "description": "Total number of questions" },
+        "createdAt": { "type": "string", "description": "Submission ISO timestamp" }
+      },
+      "required": ["userId", "chapterId", "score", "totalQuestions"]
+    },
+    "Progress": {
+      "title": "Progress",
+      "description": "Student progress for chapters and sections",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string", "description": "User UID" },
+        "chapterId": { "type": "string", "description": "Chapter ID" },
+        "completedSections": { "type": "array", "description": "List of completed section keys (e.g. mufrodat, qawaid, hiwar, quiz)" },
+        "lastAccessedAt": { "type": "string", "description": "Last accessed ISO timestamp" }
+      },
+      "required": ["userId", "chapterId"]
+    },
+    "Announcement": {
+      "title": "Announcement",
+      "description": "Teacher broadcast announcement or assignment",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string", "maxLength": 150, "description": "Announcement headline" },
+        "content": { "type": "string", "maxLength": 2000, "description": "Announcement body message" },
+        "authorName": { "type": "string", "maxLength": 100, "description": "Teacher display name" },
+        "createdAt": { "type": "string", "description": "Creation timestamp" }
+      },
+      "required": ["title", "content", "authorName"]
+    },
+    "CustomMaterial": {
+      "title": "CustomMaterial",
+      "description": "Additional lesson or vocabulary material added by teacher",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string", "maxLength": 150, "description": "Material title" },
+        "arabic": { "type": "string", "maxLength": 500, "description": "Arabic text" },
+        "meaning": { "type": "string", "maxLength": 500, "description": "Indonesian translation" },
+        "chapterId": { "type": "string", "description": "Target chapter ID" },
+        "authorName": { "type": "string", "maxLength": 100, "description": "Teacher name" },
+        "createdAt": { "type": "string", "description": "Creation timestamp" }
+      },
+      "required": ["title", "arabic", "meaning"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": { "$ref": "#/entities/User" },
+      "description": "User profile records with role information"
+    },
+    "/quizResults/{resultId}": {
+      "schema": { "$ref": "#/entities/QuizResult" },
+      "description": "Records of student quiz scores and performance"
+    },
+    "/progress/{progressId}": {
+      "schema": { "$ref": "#/entities/Progress" },
+      "description": "Tracks student chapter completion and read status"
+    },
+    "/announcements/{announcementId}": {
+      "schema": { "$ref": "#/entities/Announcement" },
+      "description": "Broadcast messages from teacher to students"
+    },
+    "/customMaterials/{materialId}": {
+      "schema": { "$ref": "#/entities/CustomMaterial" },
+      "description": "Teacher added vocabulary and supplementary lessons"
+    }
+  }
+}

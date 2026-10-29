@@ -1,0 +1,6 @@
+{
+  "name": "Al-Arabiya Kelas 7 - Pembelajaran Bahasa Arab MTs & SMP",
+  "description": "Aplikasi interaktif pembelajaran Bahasa Arab Kelas 7 dengan materi kurikulum lengkap, audio mufrodat, kuis interaktif, tutor AI cerdas, dan portal guru.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
